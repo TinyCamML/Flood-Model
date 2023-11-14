@@ -69,3 +69,6 @@ while(True):
         #uart.read('No Flood)
         # Uncomment if you have an LCD
         # img.draw_string(1,140, "No Flood", color = (10,10,100), scale = 2,mono_space = False)
+
+    if uart.read():
+        time.sleep(58) #seconds
