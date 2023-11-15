@@ -6,38 +6,46 @@ import time
 import pyb
 import tf
 
-uart = machine.UART(3, baudrate=9600)  # UART3, adjust baudrate as needed
-uart.init() #This initializes the uart pathway80
-
-# Uncomment if you have an LCD
-#import LCD
+from pyb import UART
+from pyb import Pin, ExtInt
 
 
-#setup LEDs and set into known off state
+uart = machine.UART(1, baudrate=9600)
+uart = UART(1, 9600) # UART1, adjust baudrate as needed
+
+#rtc = pyb.RTC()
+
+
 redLED   = pyb.LED(1)
 
 sensor.reset() # Initialize the camera sensor.
 sensor.set_pixformat(sensor.RGB565) # or sensor.GRAYSCALE
 sensor.set_framesize(sensor.QVGA)
-# Uncomment if you have an LCD
-#sensor.set_framesize(sensor.QQVGA2) # Special 128x160 framesize for LCD Shield.
+
 sensor.skip_frames(time = 2000)
-# Uncomment if you have an LCD
-#lcd.init() # Initialize the lcd screen.
+
 
 #red light during setup
 redLED.on()
 
 
-
-#Load the TFlite model and the labels
-net = tf.load('/MNv2Flood_cat.tflite', load_to_fb=True)
+#Load the TFlite model and the labels, takes a lot of power.
+net = tf.load('MNv2Flood_cat (3).tflite', load_to_fb=True)
 labels = ['Flood', 'NoFlood']
 
 #turn led off when model is loaded
 redLED.off()
 
 
+def callback(line):
+    pass
+
+led = pyb.LED(3)
+pin = Pin("P0", Pin.IN, Pin.PULL_UP)
+ext = ExtInt(pin, ExtInt.IRQ_FALLING, Pin.PULL_UP, callback)
+
+# Enter Stop Mode. Note the IDE will disconnect.
+machine.sleep()
 #MAIN LOOP
 
 while(True):
