@@ -46,24 +46,17 @@ ext = ExtInt(pin, ExtInt.IRQ_FALLING, Pin.PULL_UP, callback)
 
 # Enter Stop Mode. Note the IDE will disconnect.
 machine.sleep()
-#MAIN LOOP
 
 while(True):
 
     img = sensor.snapshot()
 
-    #Do the classification and get the object returned by the inference.
     TF_objs = net.classify(img)
     print(TF_objs)
 
-    #The object has a output, which is a list of classifcation scores
-    #for each of the output channels. this model only has 2 (flood, no flood).
+
     Flood = TF_objs[0].output()[0]
     NoFlood = TF_objs[0].output()[1]
-
-
-    #This loop just prints to the serial terminal (and optionally the LCD screen),
-    # but you could also blink an LED, write a number (or datetime), etc.
 
     if Flood > NoFlood:
         print('Flood')
@@ -78,5 +71,3 @@ while(True):
         # Uncomment if you have an LCD
         # img.draw_string(1,140, "No Flood", color = (10,10,100), scale = 2,mono_space = False)
 
-    if uart.read():
-        time.sleep(58) #seconds
