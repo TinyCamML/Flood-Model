@@ -1,10 +1,12 @@
-# TinyFloodCamML OpenMV code - By: ebgoldstein - Mon Oct 2nd 2023
 
 import sensor
 import image
 import time
+import utime
+import utime
 import pyb
 import tf
+import machine
 
 from pyb import UART
 from pyb import Pin, ExtInt
@@ -36,24 +38,22 @@ labels = ['Flood', 'NoFlood']
 #turn led off when model is loaded
 redLED.off()
 
-
 def callback(line):
     pass
 
 led = pyb.LED(3)
-pin = Pin("P0", Pin.IN, Pin.PULL_UP)
+pin = Pin("P7", Pin.IN, Pin.PULL_UP)
 ext = ExtInt(pin, ExtInt.IRQ_FALLING, Pin.PULL_UP, callback)
 
-# Enter Stop Mode. Note the IDE will disconnect.
-machine.sleep()
 
 while(True):
 
+    pyb.stop()
+
+    #check for sign of life.
     img = sensor.snapshot()
 
     TF_objs = net.classify(img)
-    print(TF_objs)
-
 
     Flood = TF_objs[0].output()[0]
     NoFlood = TF_objs[0].output()[1]
@@ -61,13 +61,14 @@ while(True):
     if Flood > NoFlood:
         print('Flood')
         uart.write('Flood')
-        #uart.read('Flood)
-        # Uncomment if you have an LCD
-        # img.draw_string(1,140, "Flood", color = (10,10,100), scale = 2,mono_space = False)
+
     else:
         print('No Flood')
         uart.write('No Flood')
-        #uart.read('No Flood)
-        # Uncomment if you have an LCD
-        # img.draw_string(1,140, "No Flood", color = (10,10,100), scale = 2,mono_space = False)
+
+
+    led.on()
+    time.sleep_ms(100)
+    led.off()
+    time.sleep_ms(100)
 
