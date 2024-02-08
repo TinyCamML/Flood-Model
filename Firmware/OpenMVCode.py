@@ -48,7 +48,7 @@ ext = ExtInt(pin, ExtInt.IRQ_FALLING, Pin.PULL_UP, callback)
 
 while(True):
 
-    pyb.stop()
+    machine.sleep()
 
     #check for sign of life.
     img = sensor.snapshot()
@@ -71,4 +71,16 @@ while(True):
     time.sleep_ms(100)
     led.off()
     time.sleep_ms(100)
+
+
+
+
+
+
+
+
+
+
+
+
 
