@@ -1,56 +1,32 @@
-
-import sensor
-import image
-import time
-import utime
-import utime
-import pyb
-import tf
-import machine
-
-from pyb import UART
-from pyb import Pin, ExtInt
-
+# Untitled - By: ebgoldstein - Wed Feb 14 2024
+import sensor, image, time, utime, pyb, tf, machine
+from pyb import UART, Pin, ExtInt
 
 uart = machine.UART(1, baudrate=9600)
 uart = UART(1, 9600) # UART1, adjust baudrate as needed
 
 #rtc = pyb.RTC()
-
-
-redLED   = pyb.LED(1)
-
 sensor.reset() # Initialize the camera sensor.
 sensor.set_pixformat(sensor.RGB565) # or sensor.GRAYSCALE
 sensor.set_framesize(sensor.QVGA)
 
 sensor.skip_frames(time = 2000)
 
+clock = time.clock()
 
-#red light during setup
-redLED.on()
-
-
-#Load the TFlite model and the labels, takes a lot of power.
-net = tf.load('MNv2Flood_cat (3).tflite', load_to_fb=True)
+net = tf.load('MNv2Flood_cat.tflite', load_to_fb=True)
 labels = ['Flood', 'NoFlood']
-
-#turn led off when model is loaded
-redLED.off()
 
 def callback(line):
     pass
 
-led = pyb.LED(3)
+
 pin = Pin("P7", Pin.IN, Pin.PULL_UP)
 ext = ExtInt(pin, ExtInt.IRQ_FALLING, Pin.PULL_UP, callback)
 
-
 while(True):
+    clock.tick()                    # Update the FPS clock.
 
-    machine.sleep()
-
-    #check for sign of life.
     img = sensor.snapshot()
 
     TF_objs = net.classify(img)
@@ -67,20 +43,7 @@ while(True):
         uart.write('No Flood')
 
 
-    led.on()
-    time.sleep_ms(100)
-    led.off()
     time.sleep_ms(100)
 
 
-
-
-
-
-
-
-
-
-
-
-
+    print(clock.fps())
