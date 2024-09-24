@@ -1,2 +1,2 @@
-# OMV model
-This repository contains the Jupyter Notebook to create the trained tf.lite file for use on the OpenMV.
+# ML model
+This repository contains the Jupyter Notebook to create, trained, and quantize the ML model for use on the OpenMV.
